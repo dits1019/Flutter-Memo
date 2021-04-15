@@ -69,7 +69,6 @@ void fetchData() {
 Future와 똑같이 비동기 작업을 할 때 사용된다.<br>
 - async 클래스는 await 메소드를 가지고 있다.
     - await로 선언된 메소드는 응답이 처리될 때까지 대기한다.
-- async는 
 
 #### Example
 
