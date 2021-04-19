@@ -112,7 +112,12 @@ myObject?.someProperty;
 //null이 아닌 경우는 그대로 실행 하지만 null일 경우 null을 반환
 (myObject != null) ? myObject.someProperty : null;
 ```
+<br>
 
+---
+<br>
+참고 : https://kkangsnote.tistory.com/98<br>
+https://dart.dev/codelabs/dart-cheatsheet
 
 
 
