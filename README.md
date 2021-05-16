@@ -7,5 +7,6 @@
     - [Flutter 2.0 Null Safety](./Flutter_2.0_update/null_safety.md)
     - [Flutter New Button](./Flutter_2.0_update/new_button.md)
 - [json 파싱](./json_parsing/parsing.md)
+- [Flutter 지식](./flutter/flutter_list.md)
 
     
