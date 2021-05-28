@@ -8,7 +8,9 @@ API = Application Programming Interface
 
 # JSON
 key값과 value값이 각각 매칭되는 것을 JSON format이라고 함.  
+<br>
 
+서버에서 값 가져오기
 ```dart
 // Uri는 Url의 한 종류라고 할 수 있음
 String uri = 링크;
@@ -36,6 +38,4 @@ var jsonData = await parsingData.getJsonData();
 jsonData['color']['red'];
 // Ex. id값을 가져옴
 jsonData['id']
-```
-
-
+```   

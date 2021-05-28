@@ -25,5 +25,12 @@ void initLoading() async {
     (route) => false);
 }
 ```
-
 [링크](https://devmemory.tistory.com/3)
+
+- 3. 날씨 포맷   
+`intl 라이브러리 추가`   
+```dart
+DateFormat(포맷 형식).format(날짜)
+```
+[데이터 포맷 반환 리스트](https://reasley.com/?p=3914)
+
