@@ -39,3 +39,30 @@ jsonData['color']['red'];
 // Ex. id값을 가져옴
 jsonData['id']
 ```   
+<br>
+서버에서 값 보내기
+
+```dart
+// Future<void>로 메서드 생성
+var url = Uri.parse(링크);
+
+const Map<String, String> _header = {};
+
+final _body = jsonEncode({
+    'key1' : 보낼 값,
+    'key2' : 보낼 값
+});
+
+try{
+    final Response response = await post(url, headers : _header, body : _body)
+    .timeout(Duration(시간), 
+    onTimeout : () async => new Response('false', 404));
+
+    final _result = response.body;
+
+    return _result;
+}catch(e){
+    print(e);
+}
+```
+[참고(Flutter & Node.js Mail 서비스)](https://www.youtube.com/watch?v=-en3chRAZc8)
