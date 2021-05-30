@@ -34,3 +34,23 @@ DateFormat(포맷 형식).format(날짜)
 ```
 [데이터 포맷 반환 리스트](https://reasley.com/?p=3914)
 
+- 4. 인코딩과 암호화   
+    - utf-8로 인코딩&디코딩   
+    ```dart
+    // 인코딩
+    utf8.encode(인코딩할 것);
+    // 디코딩
+    utf8.decode(디코딩할 것);
+    // 서버에서 받아온 값을 utf-8로 바꿀 때
+    utf8.decode(response.bodyBytes); 
+    ```
+    - 암호화
+    `crypto 라이브러리 추가`
+    ```dart
+    // Ex
+    // utf8로 인코딩을 먼저 해줘야 한다
+    var bytes = utf8.encode(인코딩할 것);
+    
+    // sha512로 암호화
+    sha512.convert(bytes)
+    ```
