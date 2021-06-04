@@ -54,3 +54,13 @@ DateFormat(포맷 형식).format(날짜)
     // sha512로 암호화
     sha512.convert(bytes)
     ```
+- 5. 앱 아이콘 변경
+`flutter_launcher_icons 라이브러리 추가`   
+pubspec.yaml에   
+```yaml
+flutter_icons:
+  android: true
+  ios: true
+  image_path: '사용할 이미지 경로'
+```
+
