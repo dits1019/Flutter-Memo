@@ -64,3 +64,22 @@ flutter_icons:
   image_path: '사용할 이미지 경로'
 ```
 
+- 6. 앱 이름 변경
+`android/app/src/main/AndroidManifest.xml`   
+```xml
+<application
+    android:label="이름 변경"
+>
+```
+
+`android:label 검색`
+
+<br> <br>
+
+`ios/Runner/info.plist`   
+```plist
+<key>CFBundleName</key>
+<string>이름 변경<string>
+``` 
+
+`CFBundleName 검색`
