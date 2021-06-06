@@ -83,3 +83,12 @@ flutter_icons:
 ``` 
 
 `CFBundleName 검색`
+
+- 6. 뒤로가기 막기
+```dart
+    // WillPopScope를 이용해서 뒤로가기가 적용되지 않게 함
+    WillPopScope(
+        onWillPop: () async => false,
+        child: ...
+    );  
+```
