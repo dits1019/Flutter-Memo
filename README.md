@@ -4,8 +4,8 @@
 - [기본 개념](./Basic/basic.md)
 - [Future, async, await](./Future,async,await/async.md)
 - Flutter 2.0
-    - [Flutter 2.0 Null Safety](./Flutter_2.0_update/null_safety.md)
-    - [Flutter New Button](./Flutter_2.0_update/new_button.md)
+    - [Flutter 2.0 Null Safety](./flutter_2.0_update/null_safety.md)
+    - [Flutter New Button](./flutter_2.0_update/new_button.md)
 - [json 파싱](./json_parsing/parsing.md)
 - [Flutter 지식](./flutter/flutter_list.md)
 
