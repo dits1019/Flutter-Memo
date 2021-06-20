@@ -43,6 +43,12 @@ DateFormat(포맷 형식).format(날짜)
     utf8.decode(디코딩할 것);
     // 서버에서 받아온 값을 utf-8로 바꿀 때
     utf8.decode(response.bodyBytes); 
+    // Ex. base64로 인코딩
+    base64.encode(utf8.encode(인코딩할 것));
+    // 다시 디코딩할 때
+    // 함수 실행은 스택으로 하기 때문에 utf8을 먼저 인코딩했으므로
+    // 디코딩은 나중에 한다.
+    utf8.decode(base64.decode(디코딩할 것));
     ```
     - 암호화
     `crypto 라이브러리 추가`
