@@ -98,3 +98,7 @@ flutter_icons:
         child: ...
     );  
 ```
+
+- 7. 키보드로 인한 위젯 밀림 막기
+`Scaffold`에 `resizeToAvoidBottomInset: false`를 적으면   
+키보드가 나왔을 때 위젯들이 밀리는 것을 막을 수 있다.
