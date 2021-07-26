@@ -16,3 +16,10 @@ EX.HTTP, SMTP(이메일로 전송할 때), POP3(이메일로 전송받을 때)�
     - ping : 컴퓨터에서 주소가 살아있다면(?) 응답해줌(ping + IP주소)
     - tracert : 해당 URL로 가는 라우팅 정보를 줌(tracert + URL)
     - nslookup : 해당하는 도메인에 해당하는 IP를 응답시켜줌(DNS 서버 조회, nslookup + 도메인 or IP주소)
+
+<br>
+<br>
+<br>
+
+[참고 링크](https://www.inflearn.com/course/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EC%95%B1%EA%B0%9C%EB%B0%9C-%EA%B8%B0%EC%88%A0%EB%85%B8%ED%8A%B8/dashboard)   
+[AWS책 링크](https://pyrasis.com/aws.html)
