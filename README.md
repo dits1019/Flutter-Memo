@@ -9,5 +9,6 @@
 - [json 파싱](./json_parsing/parsing.md)
 - [Flutter 지식](./flutter/flutter_list.md)
 - [네트워크 지식](./network/network.md)
+- [Kotlin 기본](./kotlin_basic/kotlin_basic.md)
 
     
