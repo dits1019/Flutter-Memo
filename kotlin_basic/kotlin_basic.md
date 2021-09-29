@@ -631,12 +631,96 @@ fun testCollectionApi() {
 
 ## 확장 함수
 - 이미 정의된 클래스를 전혀 수정하지 않고도 클래스에 포함된 함수처럼 사용할 수 있음
+```kotlin
+// 예제
 
+// String 클래스에 lastString 확장함수를 추가로 정의함
+fun String.lastString(): String {
+    return this.get(this.length - 1).toString()
+}
 
+@Test
+fun testExtensions() {
+    val str = "Hello, Extensions"
+    // lastString() 함수를 원래 String 클래스의 메소드처럼 사용 가능
+    Assert.assertEquals("s", str.lastString())
+}
 
+// 위 코드를 보면 마치 원래 String 클래스 내부에 선언된 메소드처럼 사용
+// 이렇게 실제로 클래스의 메소드는 아니지만, 클래스 외부에서 선언하고
+// 마치 클래스의 메소드처럼 사용하는 것을 확장 함수라고 함
+// Java에서도 사용 가능
+```
 
+## 널 안정성(Null Safety)
+- null  = 무엇인가 `없다`라는 의미
+- NullPointerException = NPE 예외 = 객체의 참조가 널이어서 발생하는 예외 
+```kotlin
+// 예제
 
+// 코틀린 타입은 기본적으로 널(NULL)을 허용하지 않음
+fun strLenNonNull(str: String): Int {
+    // 파라미터로 받은 str은 널이 될 수 없으므로 안전
+    return str.length
+}
 
+// 만일 널(NULL) 가능성이 있다면 타입에 ?를 붙여야 함
+fun strLenNullable(str: String): Int {
+    // 널 가능성이 있는 str 메소드에 접근하면 에러가 발생
+    // return str.length
 
+    // if로 널체크
+    if(str != null) {
+        // 널체크 이후 str은 String? 타입에서 String 타입으로 스마트 캐스팅됨
+        return str.length
+    } else {
+        return 0
+    }
+}
 
+// 문자열 끝 Char를 반환
+fun strLastCharNullable(str: String?): Char? {
+    // ?. 연산자는 str이 NULL이면 null이 반환됨
+    // (null이면 null을 반환, 아닐 때는 그대로 진행)
+    return str?.get(str.length - 1)
+}
 
+// 문자열 끝 Char를 반환
+fun strLastCharNullable(str: String?): Char? {
+    // ?. 연산자를 사용하여 str이 널이면 "".single()이 반환됨
+    // (null이면 : 뒤 코드를 반환, 아닐 때는 그대로 진행)
+    return str?.get(str.length - 1) ?: "".single()
+}
+
+// let 함수를 이용한 예제
+fun strPrintLen(str: String?) {
+    // let 함수는 수신객체인 str이 널이면 실행되지 않음
+    // '수신 객체가 널이 아닌 경우'에만 람다 함수 실행
+    str?.let { print(strLenNonNull(it)) }
+}
+
+// as 연산자는 타입 캐스팅을 시도한 대상의 값을 지정한 타입으로 변환할 수 없는 경우,
+// Java에서와 같이 ClassCastException이 발생
+// 물론 클래스 캐스트를 할 때 is 연산자로 캐스팅이 가능한지 확인할 수 있지만,
+// as? 연산자를 사용하여 편리하고 안전하게 캐스팅 가능
+
+class Truck(val id: Int, val name: String) {
+    // equals를 오버라이드함, id가 같으면 같은 객체로 취급
+    override fun equals(other: Any?): Boolean {
+        // as? 연산자를 사용하면 타입이 같은 경우 캐스팅이 정상적으로 되고
+        // 캐스팅이 실패하면 null이 반환
+        // null이 반환된 경우 엘비스 연산자의 디펄트 식이 실행되어 false가 리턴
+        val otherTruck = other as? Truck ?: return false
+
+        // otherTruck은 스마트 캐스팅되어 널을 신경쓸 필요가 없음
+        return otherTruck.id == id
+    }
+}
+
+// 타입 캐스팅을 시도할 때 타입이 맞는 경우엔 스마트 캐스팅이 되고,
+// 만일 실패하면 널이 반환되므로 엘비스 연산자가 실행되어 함수에서 false를 반환
+```
+<br/>
+<br/>
+<br/>
+안드로이드 Kotlin 앱프로그래밍 가이드
