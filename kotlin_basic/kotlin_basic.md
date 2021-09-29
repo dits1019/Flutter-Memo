@@ -300,7 +300,8 @@ public class Bar extends Foo {
 - 코틀린은 기본적으로 상속이 불가능함.  
 하지만 클래스나 메소드 앞에 `open`을 사용하면 상속 가능
 
-프로퍼티 위임과 collection의 함수형 APi, 확장 함수, 널 안정성 추가 
+내부 클래스, collection의 함수형 APi, 확장 함수, 널 안정성 추가 
+
 ## 클래스 위임
 - 객체 지향에서 위임 = 클래스의 특정 기능들을 대신 처리해 주는 것
 - 위임을 사용하는 대표적인 패턴은 데코레이터(Decorator) 패턴
@@ -484,6 +485,72 @@ class User {
     }
     ```
 3. 프로퍼티를 Map 객체에 위임
+- Map객체는 Key, Value로 이루어져 있음  
+특정 Key에 해당하는 Value를 저장하는 자료구조
+
+```kotlin
+// 예제
+
+// Animal 클래스는 map 객체를 생성자에서 받는다
+class Animal(val map:MutableMap<String, Any?>) {
+    // 프로퍼티를 map 객체로 위임한다. map 객체에서 값을 읽고,
+    // 값을 변경하면 map 객체에서 값이 변경된다.
+    var name: String by map
+    var age: Int by map
+}
+
+@Test
+fun testAnimalByMap() {
+    // Animal 객체를 생성할 때 맵 객체를 넘김
+    val animal = Animal(mutableMapOf(
+        "name" to "cat",
+        "age" to 20)
+    )
+
+    // name 속성이 map 객체에 정상적으로 위임되었는지 확인
+    Assert.assertEquals("cat", animal.name)
+    // age 속성이 map 객체에 정상적으로 위임되었는지 확인
+    Assert.assertEquals(20, animal.age)
+
+    // 프로퍼티의 값을 변경
+    animal.age = 21
+    animal.name = "dog"
+
+    // map의 값들이 바꼈는지 확인
+    Assert.assertEquals("dog", animal.map["name"])
+    Assert.assertEquals(21, animal.map["age"])
+}
+
+// Animal객체를 생성할 때 MutableMap을 생성자로 전달
+// 단지 이 작업만으로도 Animal 클래스의 name, age 프로퍼티가 초기화
+// name, age의 속성은 Getter, Setter가 Map으로 위임
+// 그렇기 때문에 이후 name, age 프로퍼티는 값을 읽을 때에도 전달받은 Map객체의 값을 읽게 되고,
+// 값을 변경하면 Map객체의 Key에 해당하는 Value가 바뀌게 됨
+```
+
+## 내부 클래스와 중첩 클래스
+```java
+// Java
+// 예제
+
+public class SampleClass {
+    int outerField1 = 0;
+    
+    // 클래스 내부에 선언된 클래스를 내부 클래스(Inner Class)라고 함
+    // 내부 클래스는 외부로 선언된 SampleClass 객체가 생성되어야 존재 O
+    class InnerClass {
+        // 내부 클래스에서는 외부 클래스의 필드에 접근 가능
+        int myField = outerField;
+    }
+
+    // 클래스 내부에 선언되어 있지만 static이 붙으면 중첩 클래스가 됨
+    // 중첩 클래스는 외부에 있는 SampleClass객체가 없어도 존재할 수 있음
+    public static class NestedClass {
+        // 중첩 클래스는 외부 클래스 필드에 접근이 불가능
+        // int myField = outerField1;
+    }
+}
+```
 
 
 
