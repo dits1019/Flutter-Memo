@@ -300,7 +300,197 @@ public class Bar extends Foo {
 - 코틀린은 기본적으로 상속이 불가능함.  
 하지만 클래스나 메소드 앞에 `open`을 사용하면 상속 가능
 
-클래스, 프로퍼티 위임과 collection의 함수형 APi, 확장 함수, 널 안정성 추가 
+프로퍼티 위임과 collection의 함수형 APi, 확장 함수, 널 안정성 추가 
+## 클래스 위임
+- 객체 지향에서 위임 = 클래스의 특정 기능들을 대신 처리해 주는 것
+- 위임을 사용하는 대표적인 패턴은 데코레이터(Decorator) 패턴
+- 데코레이터 패턴 = 특정 클래스의 기능에 추가 기능을 덧붙이는 방법
+```java
+// 예제
+
+// 캐릭터에 장학을 하면 '검의 이름으로 장착되었다'는 메세지를 출력하는 클래스
+
+// 검 객체 클래스
+public final class Sword {
+    // 검의 이름
+    String name;
+
+    // 생성자에서 이름을 받음
+    public Sword(String name) { this.name = name; }
+
+    // 장착 시 불리는 메소드
+    public void equip() { System.out.println(name + " 이 장착되었다."); }
+}
+
+// 마법검일 때는 다른 사운드가 추가되게 하고 싶어함.
+// 하지만 final로 인해 상속이 불가능한 상태일 때 데코레이터 패턴을 사용
+// 아래와 같이 Sword 클래스의 메소드를 전부 포함하는 인터페이스 제작
+
+public interface ISword {
+    // 장착 시 불리는 메소드
+    void equip();
+}
+
+// 그 후 기존의 Sword 클래스에 다음과 같이 인터페이스만 상속
+
+public final class Sword implements ISword {
+    // 검의 이름
+    String name;
+
+    // 생성자에서 이름을 받음
+    public Sword(String name) { this.name = name; }
+
+    // 장착 시 불리는 메소드
+    public void equip() { System.out.println(name + " 이 장착되었다."); }
+}
+
+// 이제 Sword 클래스는 상속을 하지 않고도 기능 확장할 수 있는 밑준비가 끝남.
+// 아래는 마법검에 해당하는 클래스
+
+// ISword 인터페이스를 상속받음
+public class MagicSwordDelegate implements ISword {
+    // ISword 타입의 객체를 필드로 가지고 있음
+    // 단지 Sword 클래스를 확장하려면 Sword 타입으로 해도 되지만 
+    // ISword 타입으로 하면 확장성이 더욱 증가
+    ISword iSword;
+
+    // 생성자에서 ISword 타입의 객체를 생성자에서 받음
+    public MagicSwordDelegate(ISword iSword) {
+        this.iSword = iSword;
+    }
+    // 확장 기능을 실행한 뒤 필드로 가지고 있는 iSword 클래스의 equip() 함수를 호출
+    // 아래와 같이 '기존에 설계된 객체에게 책임을 전달하는 것'이 위임
+
+    // 장착 시 불리는 메소드
+    @Oevrride
+    public void equip() {
+        // 멋진 사운드를 플레이한다.
+        playWonderfulSound();
+
+        // 기존 기능은 iSword에 위임
+        iSword.equip();
+    }
+
+    // 확장기능 - 멋진 사운드를 플레이하는 메소드
+    public void playWonderfunSwound() {
+        // 멋진 사운드를 플레이
+        System.out.println("짜잔");
+    }
+}
+
+// 위 클래스는 ISword 인터페이스를 필드로 가지고 있음.
+// 단지 Sword 클래스의 기능에 추가 기능을 덧붙이는 경우면 Sword 타입을 필드로 가져도 상관없지만
+// 인터페이스를 필드로 가지면 이후 인터페이스를 상속받은 모든 클래스에 대하여 확장 기능 사용 가능
+```
+
+## 프로퍼티 위임
+- 코틀린은 클래스와 프로퍼티 위임 제공  
+프로퍼티 위임은 Getter, Setter 연산자를 위임할 수 있게 하고, 3가지 방법을 제공
+    1. lazy properties = 값의 초기화를 처음 프로퍼티를 사용할 때 초기화
+    2. observable properties = 프로퍼티에 값이 변경되면 옵저버에 알려줌
+    3. storing properties = 필드가 아닌 맵에 속성을 저장
+
+```kotlin
+// 예제
+
+// 프로퍼티에 Getter, Setter를 위임하는 방법
+// 코틀린은 Custom Getter, Setter를 활용해 자동으로 생성되는 Getter, Setter를 변경할 수 있지만
+// 종종 여러 클래스에서 같은 동작을 해야 할 경우가 있을 수도 있음
+// (String 문자열 프로퍼티의 Setter가 호출될 때 자동으로 문자열을 대문자로 변경해야 하는 경우)
+// 그 때 위임을 사용하면 편리함
+
+class DelegateString {
+    // Setter에서 호출된 값을 저장할 변수
+    var text = ""
+
+    // operator는 연산자를 의미
+    // 붙인 이뉴는 Getter, Setter 메소드가 연산자로 취급되기 때문에
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
+        return text
+    }
+
+    operator fun setValue(thisRef: Any, property: KProperty<*>, value: String) {
+        // 대문자로 변경하여 저장
+        text = value.toUpperCase()
+        // Setter에 호출될 때의 문자열과 변경 후 문자열을 프린트
+        println("$value ==> ${text}")
+    }
+}
+
+// 이제 어디서든 위임 클래스를 사용 가능
+class User {
+    // 닉네임은 DelegateString클래스에 위임
+    var nickname by DelegateString()
+}
+
+// User 클래스는 nickname이라는 속성(property)이 있는데 이것은 DelegateString에 위임됨
+// 이게 가능한 이유는 코틀린에서 속성(property)은 Field로 정해지는 것이 아니라 
+// 접근자인 Getter, Setter에 의해 결정되기 때문
+// 프로퍼티 위임 클래스에 요구사항으로는 var 선언된 변수는 getValue, setValue 둘 다 구현
+// 하지만 val 선언된 변수는 getValue만 있어야 함
+```
+1. lazy 위임
+    - 프로퍼티의 초기화를 인스턴스 생성 시점이 아니라 프로퍼티를 사용하는 시점에 초기화
+    - 초기화가 오래 걸리는 속성이 있는 경우, 인스턴스 생성 시점에 모든 초기화를 진행한다면 전체적인 성능이 매우 저하됨
+    - 따라서 초기화를 하지 않고 사용하다가 실제로 사용하는 시점에 초기화를 함
+    ```kotlin
+    // 예제
+
+    // 위의 코드를 수정
+
+    class User {
+        // 닉네임은 DelegateString 클래스에 위임
+        var nickname by DelegateString()
+
+        // lazy 위임은 val 키워드로 선언되어야만 가능함
+        // 네트워크에서 받은 텍스트는 시간이 걸리므로 실제로 사용할 때 초기화
+        val httpText by lazy {
+            println("lazy init start")
+            InputStreamReader(URL("http://www.naver.com").openConnection()).readText()
+        }
+    }
+
+    // User 클래스의 httpText는 네트워크에서 데이터를 읽어야 초기화.
+    // 보통 네트워크에서 데이터를 읽어 오는 경우 속도가 매우 느려짐
+    // 이런 경우 인스턴스 생성 시점 httpText의 초기화가 진행되면 실제로는 
+    // httpText를 사용하지 않는다고 해도 초기화가 느려짐
+    // 약간 비동기 느낌
+    ```
+
+2. observable 위임
+    - `옵저버`를 사용하는 패턴은 주로 관찰하고자 하는 대상에 변경 사항이 생길 때,  
+    변경된 사실을 관측자에게 알려 주는 것, 여기서 관찰 대상은 프로퍼티
+    ```kotlin
+    // 예제
+
+    // 위의 코드를 수정
+
+    class User {
+        // 닉네임은 DelegateString클래스에 위임 O
+        var nickname by DelegateString()
+
+        // lazy 위임은 val 키워드로 선언되어야만 가능함
+        // 네트워크에서 받은 텍스트는 시간이 걸리므로 실제로 사용할 때 초기화
+        val httpText by lazy {
+            println("lazy init start")
+            InputStreamReader(URL("http://www.naver.com").openConnection()).readText()
+        }
+
+        // name 프로퍼티 값이 변결될 때마다 자동으로 observale의 코드가 실행
+        var name: String by Delegates.observale("") {
+            property, oldValue, newValue ->
+            println("기존값: ${oldValue}, 새로적용될값: ${newValue}")
+        }
+    }
+    ```
+3. 프로퍼티를 Map 객체에 위임
+
+
+
+
+
+
+
 
 
 
