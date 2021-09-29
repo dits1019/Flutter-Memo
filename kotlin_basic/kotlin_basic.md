@@ -300,7 +300,7 @@ public class Bar extends Foo {
 - 코틀린은 기본적으로 상속이 불가능함.  
 하지만 클래스나 메소드 앞에 `open`을 사용하면 상속 가능
 
-내부 클래스, collection의 함수형 APi, 확장 함수, 널 안정성 추가 
+확장 함수, 널 안정성 추가 
 
 ## 클래스 위임
 - 객체 지향에서 위임 = 클래스의 특정 기능들을 대신 처리해 주는 것
@@ -550,11 +550,87 @@ public class SampleClass {
         // int myField = outerField1;
     }
 }
+
+// 내부 클래스가 존재한다는 것은 반드시 외부에 있는 SampleClass 객체도 존재한다는 의미
+// 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 있음
+
+// 반면 중첩 클래스는 외부에 있는 SampleClass의 존재와 관계없이 독립적으로 존재할 수 있음
+// 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 없음
+// 중첩 클래스가 있다고 해서 SampleClass객체가 반드시 존재하는 것은 아니기 때문
+```
+- Java와 코틀린에 있어 중첩 클래스와 내부 클래스의 기본 설정이 다름
+```kotlin
+// 예제
+class Sample {
+    val field1 = 0
+
+    // 코틀린은 내부에 클래스를 선언하면 중첩 클래스가 됨
+    class NestedClass {
+        // 중첩 클래스에서는 외부 클래스 속성에 접근 불가
+        // val myField = field1
+    }
+
+    // 코틀린에서 내부 클래스를 선언하려면 inner 키워드 사용
+    inner class InnerClass {
+        // 내부 클래스에서는 외부 클래스의 속성에 접근 가능
+        val myField = field1
+    }
+}
+
+// 코틀린에서도 중첩 클래스와 내부 클래스의 차이점은 같음
+// 내부 클래스는 외부 클래스의 속성에 접근이 가능하며, 중첩 클래스는 접근할 수 없음
+// 클래스 내부에 클래스를 선언하는 경우 중첩 클래스가 됨
 ```
 
+## Collectioin의 함수형 API
+- 컬랙션 APi
+    - filter = 컬렉션에서 조건에 맞는 항목과 추출해 새로운 컬렉션을 반환
+    - map = 컬렉션에 항목을 변환하여 새로운 컬렉션을 만들고 반환
+    - flatmap = 컬렉션의 포함된 항목들을 평형하게 펼친 뒤 변환하여 새로운 컬렉션 반환
+    - find = 함수의 조건을 만족하는 항목 한 개를 반환
+    - group by = 컬렉션을 여러 그룹으로 이뤄진 맵으로 변경
+```kotlin
+@Test
+fun testCollectionApi() {
+    // 컬렉션을 만듬
+    val list = listOf(1, "2", 3, 4, 5.7, 1, 2)
 
+    // filter : 컬렉션에서 특정 조건이 맞는 항목만 추출하여 컬렉션 제작 -> Int 타입만 추출
+    println(list.filter{item -> item is Int})
 
+    // 람다 표현식에서 파라미터가 하나인 경우 생략이 가능
+    // 파라미터는 it 키워드로 접근 가능
+    println(list.filter {it is Int})
 
+    // map : 컬렉션에서 아이템을 변환하여 새로운 컬렉션을 만듬. 
+    // 아래 코드는 String의 컬렉션이 만들어짐
+    println(list.map{ "value: ${it}" })
+
+    // filter에서 반환된 컬렉션을 map으로 변환
+    println(list.filter { it is Int}.map {"value: ${it}" })
+
+    // 아이템을 찾음
+    println(list.find { it is Double })
+
+    // 컬렉션을 그룹화하여 Map<String, List<T>> 형태로 만듬.
+    // 아래 코드는 각 아이템의 클래스 별로 그룹화 됨
+    val map = list.groupBy{ it.javaClass }
+    println(map)
+
+    // 컬렉션 안에 컬렉션이 있는 새로운 리스트를 만듬
+    val list2 = listOf(listOf(1, 2), listOf(3, 4))
+    println(list2)
+
+    // map으로 항목을 변환
+    println(list2.map{ "value: ${it}" })
+
+    // flatmap으로 리스트를 평평하게 만들고 변환
+    println(list2.flatMap{ it.toList() })
+}
+```
+
+## 확장 함수
+- 이미 정의된 클래스를 전혀 수정하지 않고도 클래스에 포함된 함수처럼 사용할 수 있음
 
 
 
