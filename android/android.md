@@ -15,3 +15,6 @@ https://velog.io/@ellyheetov/Shallow-Copy-VS-Deep-Copy
 Java는 call by value  
 https://re-build.tistory.com/3
 
+## LayoutInflater
+https://medium.com/vingle-tech-blog/android-layoutinflater-b6e44c265408  
+[예제](https://bitnori.tistory.com/entry/Android-%EB%8B%A4%EB%A5%B8-%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83Layout%EC%9D%98-%EC%9C%84%EC%A0%AF-%EC%A0%9C%EC%96%B4%ED%95%98%EA%B8%B0-LayoutInflater-%EC%82%AC%EC%9A%A9)
