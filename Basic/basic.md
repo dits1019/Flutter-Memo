@@ -17,6 +17,9 @@
 
 - 디자인 패턴
     - [하나씩 점을 찍어 나가며](https://dailyheumsi.tistory.com/category/%EC%B7%A8%EC%97%85%EA%B3%BC%20%EA%B8%B0%EB%B3%B8%EA%B8%B0%20%ED%8A%BC%ED%8A%BC/%EB%B9%BD%20%ED%88%AC%EB%8D%94%20%EA%B8%B0%EB%B3%B8%EA%B8%B0)
+    - [템플릿 메소드](https://niceman.tistory.com/142)
+    - [옵저버](https://pjh3749.tistory.com/266)
+
 
 
 

@@ -57,4 +57,12 @@
 - 또한 모든 자료구조는 동적 할당을 전제로 함
 - https://github.com/dits1019/Data-Structure-Ex/tree/main/src/ArrayList
 
+## Singly LinkedList
+- ArrayList와 가장 큰 차이점은 바로 `노드`라는 객체를 이용하여 연결함
+- 배열을 이용하는 것이 아닌 하나의 객체를 두고 그 안에 데이터와 다른 노드를 가리키는 래퍼런스 데이터로 구성하여
+여러 노드를 하나의 체인처럼 연결하는 것
+- https://github.com/dits1019/Data-Structure-Ex/tree/main/src/Singly_LinkedList
+
+## Stack 구현
+
 참고 : [Stranger's lab](https://st-lab.tistory.com/)
