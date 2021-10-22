@@ -30,3 +30,6 @@ https://lktprogrammer.tistory.com/175
 
 ## Stream의 개념
 https://elena90.tistory.com/entry/Java-%ED%8C%8C%EC%9D%BC-%EC%9E%85%EC%B6%9C%EB%A0%A5%EC%8A%A4%ED%8A%B8%EB%A6%BCInputStreamOutputStreamReaderWriter
+
+## Android SHA1 값 알아내기
+https://stove99.github.io/etc/2021/05/11/android-studio-4.2-not-showing-gradle-task-list/
