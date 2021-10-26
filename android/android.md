@@ -33,3 +33,6 @@ https://elena90.tistory.com/entry/Java-%ED%8C%8C%EC%9D%BC-%EC%9E%85%EC%B6%9C%EB%
 
 ## Android SHA1 값 알아내기
 https://stove99.github.io/etc/2021/05/11/android-studio-4.2-not-showing-gradle-task-list/
+
+## Kotlin 뷰 바인딩
+https://duckssi.tistory.com/42
