@@ -1,4 +1,25 @@
 # Kotlin 개념
+
+## 목차
+- [변수 선언](#변수-선언)
+- [정적 ˙ 동적 타입 언어](#정적-˙-동적-타입-언어)
+- [if, else, when](#if-else-when)
+- [반복문](#반복문)
+- [함수](#함수)
+- [Kotlin 함수를 Java에서 쓰기](#Kotlin-함수를-Java에서-쓰기)
+- [함수의 파라미터](#함수의-파라미터)
+- [Getter, Setter](#Getter-Setter)
+- [프로퍼티(Property)와 필드(Field)](#프로퍼티(Property)와-필드(Field))
+- [상속](#상속)
+- [클래스 위임](#클래스-위임)
+- [프로퍼티 위임](#프로퍼티-위임)
+- [내부 클래스와 중첩 클래스](#내부-클래스와-중첩-클래스)
+- [Collectioin의 함수형 API](#collectioin의-함수형-api)
+- [확장 함수](#확장-함수)
+- [널 안정성(Null Safety)](#널-안정성(null-safety))
+- [Object](#object)
+- [Companion Object](#companion-object)
+
 ## 변수 선언
 1. val
     - 변경 불가능한 참조를 저장하는 변수(Value)
@@ -529,58 +550,97 @@ fun testAnimalByMap() {
 ```
 
 ## 내부 클래스와 중첩 클래스
-```java
-// Java
-// 예제
-
-public class SampleClass {
-    int outerField1 = 0;
-    
-    // 클래스 내부에 선언된 클래스를 내부 클래스(Inner Class)라고 함
-    // 내부 클래스는 외부로 선언된 SampleClass 객체가 생성되어야 존재 O
-    class InnerClass {
-        // 내부 클래스에서는 외부 클래스의 필드에 접근 가능
-        int myField = outerField;
-    }
-
-    // 클래스 내부에 선언되어 있지만 static이 붙으면 중첩 클래스가 됨
-    // 중첩 클래스는 외부에 있는 SampleClass객체가 없어도 존재할 수 있음
-    public static class NestedClass {
-        // 중첩 클래스는 외부 클래스 필드에 접근이 불가능
-        // int myField = outerField1;
-    }
-}
-
-// 내부 클래스가 존재한다는 것은 반드시 외부에 있는 SampleClass 객체도 존재한다는 의미
-// 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 있음
-
-// 반면 중첩 클래스는 외부에 있는 SampleClass의 존재와 관계없이 독립적으로 존재할 수 있음
-// 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 없음
-// 중첩 클래스가 있다고 해서 SampleClass객체가 반드시 존재하는 것은 아니기 때문
-```
+- ```java
+  // Java
+  // 예제
+  
+  public class SampleClass {
+      int outerField1 = 0;
+      
+      // 클래스 내부에 선언된 클래스를 내부 클래스(Inner Class)라고 함
+      // 내부 클래스는 외부로 선언된 SampleClass 객체가 생성되어야 존재 O
+      class InnerClass {
+          // 내부 클래스에서는 외부 클래스의 필드에 접근 가능
+          int myField = outerField;
+      }
+  
+      // 클래스 내부에 선언되어 있지만 static이 붙으면 중첩 클래스가 됨
+      // 중첩 클래스는 외부에 있는 SampleClass객체가 없어도 존재할 수 있음
+      public static class NestedClass {
+          // 중첩 클래스는 외부 클래스 필드에 접근이 불가능
+          // int myField = outerField1;
+      }
+  }
+  
+  // 내부 클래스가 존재한다는 것은 반드시 외부에 있는 SampleClass 객체도 존재한다는   의미
+  // 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 있음
+  
+  // 반면 중첩 클래스는 외부에 있는 SampleClass의 존재와 관계없이 독립적으로 존재할   수 있음
+  // 그렇기 때문에 외부에 있는 SampleClass의 필드에 접근할 수 없음
+  // 중첩 클래스가 있다고 해서 SampleClass객체가 반드시 존재하는 것은 아니기 때문
+  ```
 - Java와 코틀린에 있어 중첩 클래스와 내부 클래스의 기본 설정이 다름
-```kotlin
-// 예제
-class Sample {
-    val field1 = 0
+  ```kotlin
+  // 예제
+  class Sample {
+      val field1 = 0
+  
+      // 코틀린은 내부에 클래스를 선언하면 중첩 클래스가 됨
+      class NestedClass {
+          // 중첩 클래스에서는 외부 클래스 속성에 접근 불가
+          // val myField = field1
+      }
+  
+      // 코틀린에서 내부 클래스를 선언하려면 inner 키워드 사용
+      inner class InnerClass {
+          // 내부 클래스에서는 외부 클래스의 속성에 접근 가능
+          val myField = field1
+      }
+  }
+  
+  // 코틀린에서도 중첩 클래스와 내부 클래스의 차이점은 같음
+  // 내부 클래스는 외부 클래스의 속성에 접근이 가능하며, 중첩 클래스는 접근할 수 없음
+  // 클래스 내부에 클래스를 선언하는 경우 중첩 클래스가 됨
+  ```
+- 접근제한자를 중첩클스와 내부 클래스에 붙이다면
+  - 접근제한자를 활용해 중첩 클래스를 쓰게 되면 외부에 노출하지 않아도 되는 코드를 클래스 단위로 묶어서 관리하는데 도움이 됨
+  ``` kotlin
+  // 예제
 
-    // 코틀린은 내부에 클래스를 선언하면 중첩 클래스가 됨
-    class NestedClass {
-        // 중첩 클래스에서는 외부 클래스 속성에 접근 불가
-        // val myField = field1
+  class OuterClass{
+  // 중첩클래스
+    private class NestedClass{
+      val a = 1
     }
+    fun method1() = NestedClass().a
+    // 에러 'public' function exposes
+    // its 'private' return type NestedClass
+    fun method2() = NestedClass()
+  }
+  fun main(args: Array<String>) {
+      // 에러 : Cannot access 'NestedClass': it is private in 'OuterClass'
+      // 더 이상 OuterClass.NestedClass형태로 접근할 수 없고 인스턴스 조차 공유 X
+      println(OuterClass.NestedClass)
+      // 결과 : 1
+      println(OuterClass().method1())
+  }
+  ```
+  - 내부 클래스는 private 접근제한자를 쓰는게 메모리 관리 측면에서 더욱 안전할 수 있음
+  - ```kotlin
+    // 예제
 
-    // 코틀린에서 내부 클래스를 선언하려면 inner 키워드 사용
-    inner class InnerClass {
-        // 내부 클래스에서는 외부 클래스의 속성에 접근 가능
-        val myField = field1
+    class OuterClass{
+    // 내부클래스
+    private inner class InnerClass{
+      val a = 1
     }
-}
-
-// 코틀린에서도 중첩 클래스와 내부 클래스의 차이점은 같음
-// 내부 클래스는 외부 클래스의 속성에 접근이 가능하며, 중첩 클래스는 접근할 수 없음
-// 클래스 내부에 클래스를 선언하는 경우 중첩 클래스가 됨
-```
+    fun method1() = InnerClass().a
+    // 에러 : 'public' function exposes
+    // its 'private' return type NestedClass
+    // 내부 클래스도 private 접근제한자를 쓰면 중첩클래스와 동일하게 내부클래스의 인스턴스를 외부에 공개되지 않음
+    fun method2() = InnerClass()
+  }
+  ```
 
 ## Collectioin의 함수형 API
 - 컬랙션 APi
@@ -720,7 +780,165 @@ class Truck(val id: Int, val name: String) {
 // 타입 캐스팅을 시도할 때 타입이 맞는 경우엔 스마트 캐스팅이 되고,
 // 만일 실패하면 널이 반환되므로 엘비스 연산자가 실행되어 함수에서 false를 반환
 ```
+<출처>안드로이드 Kotlin 앱프로그래밍 가이드   
 <br/>
 <br/>
+
+## Object
+object로 `싱글턴 클래스`를 정의할 수 있음   
+object는 다음과 같은 경우에 사용됨
+- 싱글턴 클래스로 만들 때
+- 익명 클래스 객체를 생성할 때
+```kotlin
+// 예제
+
+// object로 싱글턴 클래스를 정의할 수 있음
+object CarFactory {
+    val cars = mutableListOf<Car>()
+
+    fun makeCar(horsepowers: Int) : Car {
+        val car = Car(horsepowers)
+        cars.add(car)
+        return car
+    }
+}
+
+class Car(power: Int) {}
+
+// 아래 코드처럼 메소드에 접근하여 Car객체를 생성할 수 있음
+// 또한 변수에 접근할 수 있음
+// CarFactory 객체는 싱글톤으로 구현이 되었기 때문에 여러번 호출해도 CarFactory 객체는 한 번만 생성
+
+val car = CarFactory.makeCar(150)
+println(CarFactory.cars.size)
+
+```
+<출처>https://codechacha.com/ko/kotlin-object-vs-class/
 <br/>
-안드로이드 Kotlin 앱프로그래밍 가이드
+<br/>
+
+## Companion Object
+- companion object는 java에 static으로 동작하는 것처럼 보일 뿐, static이 아님
+  ```kotlin
+  // 예제
+
+  class MyClass2{
+      companion object{
+          val prop = "나는 Companion object의 속성이다."
+          fun method() = "나는 Companion object의 메소드다."
+      }
+  }
+  fun main(args: Array<String>) {
+      //사실은 MyClass2.맴버는 MyClass2.Companion.맴버의 축약표현이다.
+      println(MyClass2.Companion.prop)
+      println(MyClass2.Companion.method())
+  }
+  ```
+  companion object{}는 MyClass2 클래스가 메모리에 적재되면서 함께 생성되어 `동반(companion)되는 객체`이고   
+  이 동반 객체는 클래스명.Companion으로 접근할 수 있음(하지만 축약해서 사용)
+- companion object는 객체
+  ```kotlin
+  // 예제
+
+  class MyClass2{
+      companion object{
+          val prop = "나는 Companion object의 속성이다."
+          fun method() = "나는 Companion object의 메소드다."
+      }
+  }
+  fun main(args: Array<String>) {
+      println(MyClass2.Companion.prop)
+      println(MyClass2.Companion.method())
+      // companion object는 객체이므로 변수에 할당 가능
+      val comp1 = MyClass2.Companion 
+      // 그리고 할당한 변수에서 MyClass2에 정의된 companion obbject의 멤버에 접근 가능(java의 static에서는 불가능)
+      println(comp1.prop)
+      println(comp1.method())
+
+      // 클래스 내 정의된 companion object는 클래스 이름만으로도 참조 접근이 가능
+      val comp2 = MyClass2
+      println(comp2.prop)
+      println(comp2.method())
+  }
+  ```
+- companion object에 이름을 설정 가능
+  ```kotlin
+  // 예제
+
+  class MyClass3{
+      companion object MyCompanion{  // -- (1)
+          val prop = "나는 Companion object의 속성이다."
+          fun method() = "나는 Companion object의 메소드다."
+      }
+  }
+  fun main(args: Array<String>) {
+      // 사용 가능
+      println(MyClass3.MyCompanion.prop)
+      println(MyClass3.MyCompanion.method())
+      
+      // 사용 가능
+      val comp1 = MyClass3.MyCompanion
+      println(comp1.prop)
+      println(comp1.method())
+
+      // 사용 가능
+      val comp2 = MyClass3
+      println(comp2.prop)
+      println(comp2.method())
+      
+      // 사용 불가능(이름을 설정했기 때문)
+      val comp3 = MyClass3.Companion
+      println(comp3.prop)
+      println(comp3.method())
+  }
+  ```
+- 인터페이스 내에 companion object를 정의 가능
+  ```kotlin
+  // 예제
+
+  interface MyInterface{
+      companion object{
+          val prop = "나는 인터페이스 내의 Companion object의 속성이다."
+          fun method() = "나는 인터페이스 내의 Companion object의 메소드다."
+      }
+  }
+  fun main(args: Array<String>) {
+      println(MyInterface.prop)
+      println(MyInterface.method())
+      val comp1 = MyInterface.Companion
+      println(comp1.prop)
+      println(comp1.method())
+      val comp2 = MyInterface
+      println(comp2.prop)
+      println(comp2.method())
+  }
+  ```
+- 상속 관계에서 companion object 멤버는 같은 이름일 경우 가려짐(shadowing)
+  ```kotlin
+  // 예제
+
+  open class Parent{
+      companion object{
+          val parentProp = "나는 부모값"
+      }
+      fun method0() = parentProp
+  }
+  class Child:Parent(){
+      companion object{
+          val childProp = "나는 자식값"
+      }
+      fun method1() = childProp
+      fun method2() = parentProp
+  }
+  fun main(args: Array<String>) {
+      val child = Child()
+      println(child.method0()) //나는 부모값
+      println(child.method1()) //나는 자식값
+      println(child.method2()) //나는 부모값
+  }
+  // 부모/자식의 companion object의 멤버가 다른 이름이라면 자식이 부모의 companion object 멤버를 직접 참조할 수 있음
+  ```
+  이름이 같아지면 자식 클래스의 companion object가 부모의 companion object에 가려짐
+- 클래스 내 companion object는 딱 하나만 사용 가능
+- 중첩 클래스에서는 companion 클래스를 정의할 수 없음. 하지만 내부 클래스에서는 정의 가능
+<출처>https://www.bsidesoft.com/8187, https://www.bsidesoft.com/8218
