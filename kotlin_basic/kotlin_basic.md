@@ -28,6 +28,26 @@
 2. var
     - 변경 가능한 참조(Variable)
     - Java의 일반적인 변수에 해당
+3. lateinit
+    - ```kotlin
+      // 예제
+    
+      // lateinit을 안 사용하면
+      // null이 가능한 변수로 선언
+      private var str : String? = null
+      // 이렇게 만들면 null이 가능하기 때문에
+      // 계속해서 null check를 해줘야 함
+      str = "Hello World"
+
+      // lateinit을 사용하면
+      // null이 될 수 없는 변수로 선언됨
+      private lateinit var num : Int
+      // null check를 안 해줘도 됨
+      num = 10
+
+      // lateinit을 사용하려면 타입이 꼭 'var'여야 함
+      ```
+
 
 ## 정적 ˙ 동적 타입 언어
 1. 정적 타입 언어
@@ -776,11 +796,18 @@ class Truck(val id: Int, val name: String) {
         return otherTruck.id == id
     }
 }
-
 // 타입 캐스팅을 시도할 때 타입이 맞는 경우엔 스마트 캐스팅이 되고,
 // 만일 실패하면 널이 반환되므로 엘비스 연산자가 실행되어 함수에서 false를 반환
+
+// !!를 사용하여 null이 아니라고 할 수 있음
+fun ignoreNull(s: String?) {
+    val stringNotNull : String = s!!
+    // stringNotNull은 null이 아닌 값으로 인식됨
+    println(stringNotNull.length)
+}
 ```
 <출처>안드로이드 Kotlin 앱프로그래밍 가이드   
+<출처>https://0391kjy.tistory.com/53
 <br/>
 <br/>
 
