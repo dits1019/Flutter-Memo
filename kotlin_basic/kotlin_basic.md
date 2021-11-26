@@ -19,6 +19,7 @@
 - [널 안정성(Null Safety)](#널-안정성(null-safety))
 - [Object](#object)
 - [Companion Object](#companion-object)
+- [Coroutine](#coroutine)
 
 ## 변수 선언
 1. val
@@ -969,3 +970,285 @@ println(CarFactory.cars.size)
 - 클래스 내 companion object는 딱 하나만 사용 가능
 - 중첩 클래스에서는 companion 클래스를 정의할 수 없음. 하지만 내부 클래스에서는 정의 가능
 <출처>https://www.bsidesoft.com/8187, https://www.bsidesoft.com/8218
+
+## Coroutine
+코루틴이 시작된 스레드를 중단하지 않으면서 `비동기적`으로 실행되는 코드(async와 await같은 느낌?)
+- 코루틴 스코프
+    - 모든 코루틴은 스코프 내에서 실행되어야 하는데 이를 통해서 액티비티 또는 프르개믄터의 생명주기에 따라 소멸 될 때   
+    관련 코루틴을 한번에 취소할 수 있는데 이는 곧 메모리 누수를 방지
+    - 스코프는 이미 내장된 범위를 사용할 수 있음
+    - 스코프 종류
+        - 글로벌 스코프 : 앱의 생명주기와 함께 동작하기 때문에 실행 도중에 별도 생명 주기 관리가 필요없음.   
+        시작 ~ 종료까지 긴기간 실행되는 코루틴의 경우에 적합
+        - 코루틴 스코프 : 버튼을 눌러 다운로드 하거나 서버에서 이미지를 열 때 등,   
+        필요할 때만 열고 완료되면 닫아주는 코루틴스코프를 사용할 수 있음   
+        글로벌 스코프와 다릴 디스패쳐를 지정할 수 있는데 이는 코루틴이 실행될 스레드를 지정하는 것
+        - ViewModelScope : Jetpack 아키텍쳐의 뷰모델 컴포넌트 사용시 ViewModel 인스턴스에서 사용하기 위해 제공되는 스코프   
+        해당 스코프로 실행되는 코루틴 뷰모델 인스턴스가 소멸될 때 자동으로 취소
+
+        <br/>
+- 코루틴 디스패쳐
+    - Dispatchers.Default : 안드로이드 기본 스레드풀 사용. CPU를 많이 쓰는 작업에 최적화(데이터 정렬, 복잡한 연산 등)
+    - Dispatchers.IO : 이미지 다운로드, 파일 입출력 등 입출력에 최적화 되어있는 디스패쳐(네트워크, 디스크, DB 작업에 적합)
+    - Dispatchers.Main : 안드로이드 기본 스레드에서 코루틴 실행. UI와 상호작용에 최적화
+    - Dispatchers.Unconfined : 호출한 컨텍스트를 기본으로 사용하는데 중단 후 다시 실행될 때 컨텍스트가 바뀌면 바뀐 컨텍스트를 따라가는 특이한 디스패쳐
+- 기본
+    - runBlocking { 코드 } : 비동기가 아닌 동기로 처리
+    - launch { 코드 } : 독립적으로 계속 작동하는 나머지 코드와 동시에 새 코루틴을 시작, 반환값이 없는 Job 객체
+    - delay(timeMillis: Long) : timeMillis만큼 일시 중단
+    - suspend : 함수(fun 키워드) 앞에 붙일 시 launch 안에서 사용가능한 함수로 만듬
+    - job.cancelAndJoin() : 작업을 취소하고 완료될 때까지 기다림
+    - try { 실행코드 } finally { 마지막 코드 } : 실행코드가 끝나면 마지막 코드를 실행(중간에 실행코드가 끝나도 마지막 코드 실행)
+    - async { 코드 } : launch와 기능이 같음, 하지만 반환값이 있는 Deffered 객체(마지막 값 return)
+
+    <br/>
+
+    - coroutinScope : 고유한 범위를 선언할 수 있음. 코루틴 범위를 만들고 실해오딘 모든 자식이 완료될 때까지 완료되지 않음
+        - runBlocking과 coroutineScope의 차이점 : runBlocking메소드는 대기를 위해 현재 스레드를 차단하는 반면 coroutineScope는 일시 중단되어 다른 용도를 위해 기본 스레드를 해제   
+        따라서 runBlocking은 일반 함수, coroutineScope는 일시 중단 함수
+        - ``` kotlin
+          // 예제
+          fun main() = runBlocking { doWorld() }
+
+          suspend fun doWorld() = coroutineScope { // this : CoroutineScope
+              launch {
+                  delay(1000L)
+                  println("World!)
+              }
+              println("Hello)
+          }
+          // 출력 결과
+          // Hello
+          // World!
+          ```
+        - 동시에 여러 개의 코루틴을 사용할 수 있음
+          ``` kotlin 
+          fun main() = runBlocking {
+              // runBlocking 안에 있으므로 doWorld가 끝난 후 "Done"을 출력
+              doWorld()
+              println("Done")
+          }
+
+          suspend fun doWorld() = coroutineScope { // this : CoroutineScope
+              launch {
+                  delay(2000L)
+                  println("World2")
+              }
+              launch {
+                  delay(1000L)
+                  println("World1")
+              }
+              println("Hello")
+          }
+          // 출력 결과
+          // Hello
+          // World1
+          // World2
+          // Done
+          ```
+    - 명시적 작업
+      ``` kotlin
+      val job = launch { // 새 코루틴을 시작하고 해당 작업에 대한 참조를 유지
+          delay(1000L)
+          println("World!")
+      }
+      println("Hello")
+      job.join() // 자식 코루틴이 완료될 때까지 기다림
+      println("Done")
+      
+      // 출력 결과
+      // Hello
+      // World!
+      // Done
+      ```
+- 취소할 수 없게 실행
+  ``` kotlin
+  val job = launch {
+      try {
+          repeat(1000) { i ->
+              println("job: I'm sleeping $i ...")
+              delay(500L)
+          }
+      } finally {
+          withContext(NonCancellable) {
+              println("job: I'm running finally")
+              delay(1000L)
+              println("job: And I've just delayed for 1 sec because I'm non-cancellable")
+          }
+      }
+  }
+  delay(1300L) // 약간 지연
+  println("main: I'm tired of waiting!")
+  job.cancelAndJoin() // 작업을 취소하고 완료될 때까지 기다림
+  println("main: Now I can quit.")
+
+  // 출력 결과
+  // job: I'm sleeping 0 ...
+  // job: I'm sleeping 1 ...
+  // job: I'm sleeping 2 ...
+  // main: I'm tired of waiting!
+  // job: I'm running finally
+  // job: And I've just delayed for 1 sec because I'm non-cancellable
+  // main: Now I can quit.
+  ```
+- 시간 제한
+    - 예외 발생
+      ``` kotlin
+      withTimeout (1300L) {
+          repeat(1000) { i ->
+              println("I'm sleeping $i ...")
+              delay(500L)
+          }
+      }
+      // 출력 결과
+      // I'm sleeping 0 ...
+      // I'm sleeping 1 ...
+      // I'm sleeping 2 ...
+      // Exception in thread "main" kotlinx.coroutines.TimeoutCancellationException: Timed out waiting for 1300 ms
+      ```
+    - 예외 없애기
+      ``` kotlin
+      //
+      val result = withTimeoutOrNull(1300L) {
+          repeat(1000) { i -> 
+              println("I'm sleeping $i ...")
+              delay(500L)
+          }
+          "Done" // 이 결과를 생성하기 전에 취소됨
+      }
+      println("Result is $result")
+
+      // 출력 결과
+      // I'm sleeping 0 ...
+      // I'm sleeping 1 ...
+      // I'm sleeping 2 ...
+      // Result is null
+      ```
+- 비동기 지연
+    - async 매개 변수에 CoroutineStart.LAZY로 설정해 async를 지연 가능
+      ``` kotlin
+      suspend fun doSomethingUsefulOne(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 13
+      }
+  
+      suspend fun doSomethingUsefulTwo(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 29
+      }
+
+      val time = measureTimeMillis {
+          val one = async(start = CoroutineStart.LAZY) { doSomethingUsefulOne() }
+          val two = async(start = CoroutineStart.LAZY) { doSomethingUsefulTwo() }
+          // 일부 계산
+          one.start() // 첫 번째 시작
+          two.start() // 두 번째 시작
+          println("The answer is ${one.await() + two.await()}")
+      }
+      println("Completed in $time ms")
+
+      // 출력 결과
+      // The answer is 42
+      // Completed in 1013 ms
+      ```
+- 비동기식 함수
+    - ``` kotlin
+      suspend fun doSomethingUsefulOne(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 13
+      }
+
+      suspend fun doSomethingUsefulTwo(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 29
+      }
+
+      // GlobalScope는 섬세한 API여서 명시적으로 선택해야 함
+      @OptIn(DelicateCoroutinesApi::class)
+      fun somethingUsefulOneAsync() = GlobalScope.async {
+          doSomethingUsefulOne()
+      }
+
+      @OptIn(DelicateCoroutinesApi::class)
+      fun somethingUsefulTwoAsync() = GlobalScope.async {
+          doSomethingUsefulTwo()
+      }
+
+      fun main() {
+          val time = measureTimeMillis {
+              // 코루틴 외부에서 비동기 작업을 실행 가능
+              val one = somethingUsefulOneAsync()
+              val two = somethingUsefulTwoAsync()
+
+              // 그러나 결과를 기다리는 것은 일시 중단 또는 차단을 포함해야 함
+              // 여기서 runBlocking {}을 사용하여 결과를 기다리는 동안 메인 스레드를 차단
+              runBlocking {
+                  println("The answer is ${one.await() + two.await()}")
+              }
+          }
+          println("Completed in $time ms")
+      }
+      // 출력 결과
+      // The answer is 42
+      // Completed in 1132 ms
+      // 시작한 작업이 오류가 생겨서 중단되었음에도 불구하고 백그라운드에서 실행되기 때문에 코루틴과 함께 이 스타일을 사용하는 것은 강력히 권장하지 않음
+      ```
+- 비동기를 사용한 구조적 동시성
+    - ``` kotlin
+      suspend fun doSomethingUsefulOne(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 13
+      }
+
+      suspend fun doSomethingUsefulTwo(): Int {
+          delay(1000L) // 대충 엄청난 작업들
+          return 29
+      }
+    
+      // 이렇게 하면 함수 코드 내에서 문제가 발생하여 예외가 발생하면 해당 범위에서 시작된 모든 코루틴 취소
+      // 비동기식 대신 이 방식 선호
+      suspend fun concurrentSum(): Int = coroutineScope {
+          val one = async { doSomethingUsefulOne() }
+          val two = async { doSomethingUsefulTwo() }
+          one.await() + two.await()
+      }
+
+      val time = measureTimeMillis {
+          println("The answer is ${concurrentSum()}")
+      }
+      println("Completed in $time ms")
+      ```
+    - 취소는 항상 코루틴 계층 구조를 통해 전파
+      ``` kotlin
+      fun main = runBlocking<Unit> {
+          try {
+              failedConcurrentSum()
+          } catch(e: ArithmeticException) {
+              println("Computation failed with ArithmeticException")
+          }
+      }
+
+      suspend fun failedConcurrentSum(): Int = coroutineScope {
+          val one = async<Int> {
+              try {
+                  delay(Long.MAX_VALUE)
+                  42
+              } finally {
+                  println("First child was cancelled")
+              }
+          }
+          val two = async<Int> {
+              println("Second child throws an exception")
+              throw ArithmeticException()
+          }
+          one.await() + two.await()
+      }
+      // 출력 결과
+      // Second child throws an exception
+      // First child was cancelled
+      // Computation failed with ArithmeticException
+      ```
+      자료구조
+      https://librewiki.net/wiki/%EC%8B%9C%EB%A6%AC%EC%A6%88:%EC%88%98%ED%95%99%EC%9D%B8%EB%93%AF_%EA%B3%BC%ED%95%99%EC%95%84%EB%8B%8C_%EA%B3%B5%ED%95%99%EA%B0%99%EC%9D%80_%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B3%BC%ED%95%99/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98_%EA%B8%B0%EC%B4%88
+
+      https://visualgo.net/ko
