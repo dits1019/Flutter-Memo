@@ -11,5 +11,6 @@
 - [네트워크 지식](./network/network.md)
 - [Kotlin 기본](./kotlin_basic/kotlin_basic.md)
 - [Android](./android/android.md)
-- [ 자료구조[JAVA] ](./data_structure/data_structure.md)
+- [자료구조[JAVA]](./data_structure/data_structure.md)
+- [git 정리](./git/git.md)
     
