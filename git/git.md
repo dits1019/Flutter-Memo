@@ -57,6 +57,11 @@ Git에서 관리하는 파일은 `상태(status)`를 가진다.
 - git branch -d '브랜치 이름' : branch 삭제
 - git merge '브랜치 이름' : 현재 branch에 다른 branch를 병합(merge)
 - git merge --aboort : merge를 하다가 conflict(충돌)가 발생했을 때, 일단은 merge작업을 취소하고 이전 상태로 돌아감, merge 작업 취소
+- git fetch : remote repository에 코드를 local repository에 가져오기,     
+  머지하기 전에 점검해야할 필요가 있을 때 사용(git diff로 비교), git pull은 git fetch 후 자동으로 merge도 해주는 기능
+- git blame '파일 이름' : 어떤 파일의 특정 코드를 누가 작성했는지 찾아내기 위한 명령어
+- git revert '커밋 아이디' : 특정 commit에서 이루어진 작업을 되돌리는 commit을 새로 생성(전에 했던 commit을 다시 commit)
+- git reflog : HEAD가 이때까지 가리켜왔던 commit들을 기록한 정보를 보여주기
 
 - merge 중 conflict가 발생했을 경우   
 conflict가 발생한 파일을 열고   
@@ -64,7 +69,9 @@ merge의 결과가 되었으면 하는 모습대로 코드를 수정 후 commit
 - 그 외 
     - HEAD : 어떤 커밋 하나를 가리킴
     - branch : 하나의 코드 관리 흐름
-    - master : 처음 repository를 만들고 커밋을 하면 자동으로 생기는 브랜치(기본 브랜치)   
+    - master : 처음 repository를 만들고 커밋을 하면 자동으로 생기는 브랜치(기본 브랜치) 
+    - git의 HEAD는 branch를 가르키고 그 branch는 커밋을 가르키는 방식   
+    ex) HEAD -> master -> abcd12...(commit)  
 
 <br>
 <br>
